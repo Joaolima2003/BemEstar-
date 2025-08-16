@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { LoginScreen } from './src/screens/Login/LoginScreen'
 import { ForgotPasswordScreen } from './src/screens/Login/ForgotPasswordScreen'
+import { RegisterUserScreen } from './src/screens/Login/RegisterUserScreen'
 import { RookStackParamList } from './src/types/navigation'
 
 
@@ -11,9 +12,10 @@ const Stack = createNativeStackNavigator<RookStackParamList>()
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name= "Login" component={LoginScreen} />
-        <Stack.Screen name= "ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Navigator initialRouteName='Login'>
+        <Stack.Screen name= 'Login' component={LoginScreen} />
+        <Stack.Screen name= 'ForgotPassword' component={ForgotPasswordScreen}/>
+        <Stack.Screen name= 'Register' component={RegisterUserScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

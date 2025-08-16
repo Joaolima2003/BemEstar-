@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import * as React from 'react'
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RookStackParamList } from '../../types/navigation'
+import Ionicons from '@expo/vector-icons/Ionicons'
 
 type ForgotPasswordScreenNavigationProp = NativeStackNavigationProp<RookStackParamList, 'ForgotPassword'>
 
 export function ForgotPasswordScreen() {
   const navigation = useNavigation<ForgotPasswordScreenNavigationProp>()
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [hidePassword, setHidePassword] = useState(true)
-  const [User, setUser] = useState('')
+  const [newPassword, setNewPassword] = React.useState('')
+  const [confirmPassword, setConfirmPassword] = React.useState('')
+  const [hidePassword, setHidePassword] = React.useState(true)
+  const [Email, setEmail] = React.useState('')
 
   function validatePassword(password: any) {
     if (password.length < 8) {
@@ -41,7 +42,7 @@ export function ForgotPasswordScreen() {
     
     Alert.alert('Sucesso', 'Senha atualizada!')
     navigation.navigate('Login')
-    setUser('')
+    setEmail('')
     setNewPassword('')
     setConfirmPassword('')
   }
@@ -51,9 +52,9 @@ export function ForgotPasswordScreen() {
       <View style={styles.box}>
         <View>
             <TextInput style = {styles.input}
-            placeholder="User"
-            value= {User}
-            
+            placeholder="Email"
+            value= {Email}
+            onChangeText={setEmail}
             />
         </View>
         
@@ -67,9 +68,11 @@ export function ForgotPasswordScreen() {
             onChangeText={setNewPassword}
           />
           <Pressable onPress={() => setHidePassword(!hidePassword)} style={styles.showButton}>
-            <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>
-              {hidePassword ? 'Show' : 'Hide'}
-            </Text>
+            <Ionicons 
+              name={hidePassword ? "eye-off" : "eye"} 
+              size={24} 
+              color="gray" 
+            />
           </Pressable>
         </View>
 
@@ -82,9 +85,11 @@ export function ForgotPasswordScreen() {
             onChangeText={setConfirmPassword}
           />
           <Pressable onPress={() => setHidePassword(!hidePassword)} style={styles.showButton}>
-            <Text style={{ color: '#007AFF', fontWeight: 'bold' }}>
-              {hidePassword ? 'Show' : 'Hide'}
-            </Text>
+            <Ionicons 
+              name={hidePassword ? "eye-off" : "eye"} 
+              size={24} 
+              color="gray" 
+            />
           </Pressable>
         </View>
 

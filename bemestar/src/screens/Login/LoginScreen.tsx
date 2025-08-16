@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, TextInput, Pressable, Alert} from 'react-native
 import { useNavigation } from '@react-navigation/native'
 import { RookStackParamList } from '../../types/navigation'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import Ionicons from '@expo/vector-icons/Ionicons'
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<RookStackParamList, 'Login'>
 
 export function LoginScreen() {
-  const [User, setUser] = React.useState('')
+  const [Email, setEmail] = React.useState('')
   const [Password, setPassword] = React.useState('')
   const [hidePassword, setHidePassword] = React.useState(true)
   const [errorPassword, setErrorPassword] = React.useState('')
@@ -19,13 +20,19 @@ export function LoginScreen() {
       setErrorPassword(erro)
       return
     }
-    Alert.alert('Login Realizado', `User: ${User}`)
-    setUser('')
+
+    if (!Email){
+      Alert.alert('Erro', 'O campo de usuário não pode estar vazio')
+      return
+    }
+
+    Alert.alert('Login Realizado', `Email: ${Email}`)
+    setEmail('')
     setPassword('')
     setErrorPassword('')
   }
 
-  function validatePassword(password:any){
+  function validatePassword(password:string){
     if(password.length < 8){
       return 'A senha deve ter pelomenos 8 caracteres'
     }
@@ -41,17 +48,7 @@ export function LoginScreen() {
     return ''
   }
   
-
-
-  function handleForgotPassword(){
-    
-    navigation.navigate('ForgotPassword')
-  }
-
-  function handleRegister(){
-    console.log('Redirecionando para tela de registro')
-  }
-  
+ 
   
  return (
     <View style = {styles.centralize}>
@@ -61,9 +58,9 @@ export function LoginScreen() {
           </View>
             <TextInput
                 style = {styles.input}
-                placeholder='User'
-                value={User}
-                onChangeText={setUser}
+                placeholder='Email'
+                value={Email}
+                onChangeText={setEmail}
             />
             <View style = {styles.passwordContainer}>
                 <TextInput
@@ -80,28 +77,30 @@ export function LoginScreen() {
                     style = {styles.showButton}
                     onPress={() => setHidePassword(!hidePassword)}
                 >
-                  <Text style={{color: '#007AFF', fontWeight: 'bold' }}>
-                    {hidePassword ? 'Show': 'Hide'}
-                  </Text>
+                <Ionicons 
+                  name={hidePassword ? "eye-off" : "eye"} 
+                  size={24} 
+                  color="gray" 
+                />
                 </Pressable>
             </View>
 
             {errorPassword ? <Text style={{color: 'red', marginBottom: 10}}>{errorPassword}</Text> : null}
 
 
-                <Pressable onPress={handleLogin} style = {styles.buttonEnter}>
-                    <Text style = {styles.textEnter}>Join</Text>
-                </Pressable>
+              <Pressable onPress={handleLogin} style = {styles.buttonEnter}>
+                  <Text style = {styles.textEnter}>Join</Text>
+              </Pressable>
 
-                <Pressable onPress={handleRegister} style = {styles.buttonRegister}>
-                  <Text style = {styles.textRegister}>Register</Text>
+              <Pressable onPress={()=> navigation.navigate('Register')} style = {styles.buttonRegister}>
+                <Text style = {styles.textRegister}>Register</Text>
 
-                </Pressable>
+              </Pressable>
 
                 
-                <Pressable onPress={handleForgotPassword} style = {styles.link}>
-                    <Text style = {styles.linkText}> Esqueci minha senha</Text>
-                </Pressable>
+              <Pressable style = {styles.link}>
+                  <Text style = {styles.linkText} onPress={() => navigation.navigate('ForgotPassword')}> Forgot My Password</Text>
+              </Pressable>
 
               
           </View>
