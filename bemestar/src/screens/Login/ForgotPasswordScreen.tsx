@@ -1,155 +1,113 @@
-import * as React from 'react'
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native'
+import React from "react";
+import { View, Text, TextInput, StyleSheet, Pressable, ImageBackground} from "react-native"
 import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RookStackParamList } from '../../types/navigation'
-import Ionicons from '@expo/vector-icons/Ionicons'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { Formik } from "formik";
+import * as Yup from "yup";
 
-type ForgotPasswordScreenNavigationProp = NativeStackNavigationProp<RookStackParamList, 'ForgotPassword'>
+const yupValidation = Yup.object().shape({
+  email: Yup.string().email("E-mail inválido").required("Campo obrigatório"),
+})
+
+type RegisterScreenNavigationProp = NativeStackNavigationProp<RookStackParamList, 'ForgotPassword'>
+
 
 export function ForgotPasswordScreen() {
-  const navigation = useNavigation<ForgotPasswordScreenNavigationProp>()
-  const [newPassword, setNewPassword] = React.useState('')
-  const [confirmPassword, setConfirmPassword] = React.useState('')
-  const [hidePassword, setHidePassword] = React.useState(true)
-  const [Email, setEmail] = React.useState('')
+  const navigation = useNavigation<RegisterScreenNavigationProp>()
 
-  function validatePassword(password: any) {
-    if (password.length < 8) {
-      return 'A senha deve ter pelo menos 8 caracteres'
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'A senha deve conter pelo menos uma letra maiúscula'
-    }
-    if (!/[0-9]/.test(password)) {
-      return 'A senha deve conter pelo menos um número'
-    }
-    return ''
-  }
-
-  function handleResetPassword() {
-    const erro = validatePassword(newPassword)
-    if (erro) {
-      Alert.alert('Erro', erro)
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      Alert.alert('Erro', 'As senhas não coincidem')
-      return
-    }
-
-    
-    Alert.alert('Sucesso', 'Senha atualizada!')
-    navigation.navigate('Login')
-    setEmail('')
-    setNewPassword('')
-    setConfirmPassword('')
-  }
 
   return (
-    <View style={styles.centralize}>
-      <View style={styles.box}>
-        <View>
-            <TextInput style = {styles.input}
-            placeholder="Email"
-            value= {Email}
-            onChangeText={setEmail}
-            />
-        </View>
-        
+    <ImageBackground
+      source={require('../../assets/imgs/background.png')}
+      style={styles.background}
+    >
+    <View style={styles.container}>
+      <Text style={styles.title}>Esqueceu sua senha?</Text>
+      <Text style={styles.subtitle}>
+        Digite seu e-mail e enviaremos instruções para redefinição.
+      </Text>
 
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={[styles.input, { flex: 1 }]}
-            placeholder="New Password"
-            secureTextEntry={hidePassword}
-            value={newPassword}
-            onChangeText={setNewPassword}
-          />
-          <Pressable onPress={() => setHidePassword(!hidePassword)} style={styles.showButton}>
-            <Ionicons 
-              name={hidePassword ? "eye-off" : "eye"} 
-              size={24} 
-              color="gray" 
+      <Formik
+        initialValues={{ email: "" }}
+        validationSchema={yupValidation}
+        onSubmit={(values) => {
+          console.log("E-mail para reset:", values.email)
+          {/*Chamar api de recuperação de senha*/}
+          alert("Se este e-mail estiver cadastrado, você receberá instruções.");
+          navigation.goBack()
+        }}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <View>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite seu e-mail"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={values.email}
+              onChangeText={handleChange("email")}
+              onBlur={handleBlur("email")}
             />
-          </Pressable>
-        </View>
+            {errors.email && touched.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
 
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={[styles.input, { flex: 1 }]}
-            placeholder="Confirmar senha"
-            secureTextEntry={hidePassword}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-          <Pressable onPress={() => setHidePassword(!hidePassword)} style={styles.showButton}>
-            <Ionicons 
-              name={hidePassword ? "eye-off" : "eye"} 
-              size={24} 
-              color="gray" 
-            />
-          </Pressable>
-        </View>
-
-        <Pressable style={styles.buttonSend} onPress={handleResetPassword}>
-          <Text style={styles.textSend}>Recuperar Senha</Text>
-        </Pressable>
-      </View>
+            <Pressable style={styles.button} onPress={handleSubmit as any}>
+              <Text style={styles.buttonText}>Enviar</Text>
+            </Pressable>
+          </View>
+        )}
+      </Formik>
     </View>
-  );
+    </ImageBackground>
+  )
 }
 
 const styles = StyleSheet.create({
-  centralize: {
+  container: {
     flex: 1,
-    backgroundColor: '#dedede',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    width: '80%',
-    height: 300,
     padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    elevation: 5,
+    justifyContent: "center",
+
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#555",
     marginBottom: 20,
+    textAlign: "center",
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-    backgroundColor: '#fff',
-  },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 12,
     marginBottom: 10,
   },
-  showButton: {
-    marginLeft: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+  errorText: {
+    fontSize: 12,
+    color: "red",
+    marginBottom: 10,
   },
-  buttonSend: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 12,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 10,
+  button: {
+    backgroundColor: "#007bff",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
   },
-  textSend: {
-    color: '#fff',
-    fontWeight: 'bold',
+  buttonText: {
+    color: "#fff",
     fontSize: 16,
+    fontWeight: "bold",
   },
-})
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+});

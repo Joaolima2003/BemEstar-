@@ -1,127 +1,131 @@
 import * as React from 'react'
-import { View, Text, StyleSheet, TextInput, Pressable, Alert} from 'react-native'
+import { View, Text, StyleSheet, TextInput, Pressable, Alert, ImageBackground } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { RookStackParamList } from '../../types/navigation'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { Formik } from 'formik'
+import * as Yup from 'yup'
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<RookStackParamList, 'Login'>
 
 export function LoginScreen() {
-  const [Email, setEmail] = React.useState('')
-  const [Password, setPassword] = React.useState('')
   const [hidePassword, setHidePassword] = React.useState(true)
-  const [errorPassword, setErrorPassword] = React.useState('')
   const navigation = useNavigation<LoginScreenNavigationProp>()
 
-  function handleLogin(){
-    const erro = validatePassword(Password)
-    if(erro){
-      setErrorPassword(erro)
-      return
-    }
+  const yupValidation = Yup.object().shape({
+    email: Yup.string().email('Email inválido').required('O email é obrigatório'),
+    password: Yup.string().min(8, 'A senha deve ter pelo menos 8 caracteres')
+    .matches(/[A-Z]/, 'A senha deve conter pelo menos uma letra maiúscula')
+    .matches(/[0-9]/, 'A senha deve conter pelo menos um número')
+    .matches(/[!@#$%^&*]/, 'A senha deve conter pelo menos um caractere especial')
+    .required('A senha é obrigatória'),
+})
 
-    if (!Email){
-      Alert.alert('Erro', 'O campo de usuário não pode estar vazio')
-      return
-    }
 
-    Alert.alert('Login Realizado', `Email: ${Email}`)
-    setEmail('')
-    setPassword('')
-    setErrorPassword('')
-  }
 
-  function validatePassword(password:string){
-    if(password.length < 8){
-      return 'A senha deve ter pelomenos 8 caracteres'
-    }
-    if(!/[A-Z]/.test(password)){
-      return 'A senha deve conter pelomenos uma letra maiúscula'
-    }
-    if(!/[0-9]/.test(password)){
-      return 'A senha deve conter pelomenos um número'
-    }
-    if (!/[!@#$%^&*]/.test(password)) {
-    return "A senha deve conter pelo menos um caractere especial.";
-    }
-    return ''
-  }
-  
- 
-  
- return (
-    <View style = {styles.centralize}>
-        <View style = {styles.box}>
-          <View style = {{alignItems: 'center'}}>
-          
+  return (
+    <ImageBackground
+      source={require('../../assets/imgs/background.png')}
+      style={styles.background}
+    >
+      <View style={styles.centralize}>
+        <View style={styles.box}>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={styles.titleLogin}>Login</Text>
           </View>
-            <TextInput
-                style = {styles.input}
-                placeholder='Email'
-                value={Email}
-                onChangeText={setEmail}
-            />
-            <View style = {styles.passwordContainer}>
+          <Formik
+            initialValues = {{email: '', password: ''}}
+            validationSchema = {yupValidation}
+            onSubmit = {(values, { resetForm }) => {
+               Alert.alert('Login realizado', `Email: ${values.email}`) 
+               resetForm()
+               navigation.navigate('Home')
+            }} >
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+              <>
+               
                 <TextInput
-                    style = {[styles.input, {flex: 1}]}
-                    placeholder='Password'
-                    secureTextEntry={hidePassword}
-                    value={Password}
-                    onChangeText={(validatepassword) => { 
-                      setPassword(validatepassword)
-                      setErrorPassword(validatePassword(validatepassword))
-                    }}   
+                  style={styles.input}
+                  placeholder="Email"
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
                 />
-                <Pressable
-                    style = {styles.showButton}
-                    onPress={() => setHidePassword(!hidePassword)}
-                >
-                <Ionicons 
-                  name={hidePassword ? "eye-off" : "eye"} 
-                  size={24} 
-                  color="gray" 
-                />
-                </Pressable>
-            </View>
-
-            {errorPassword ? <Text style={{color: 'red', marginBottom: 10}}>{errorPassword}</Text> : null}
-
-
-              <Pressable onPress={handleLogin} style = {styles.buttonEnter}>
-                  <Text style = {styles.textEnter}>Join</Text>
-              </Pressable>
-
-              <Pressable onPress={()=> navigation.navigate('Register')} style = {styles.buttonRegister}>
-                <Text style = {styles.textRegister}>Register</Text>
-
-              </Pressable>
+                {errors.email && touched.email && (
+                  <Text style={styles.errorText}>{errors.email}</Text>
+                )}
 
                 
-              <Pressable style = {styles.link}>
-                  <Text style = {styles.linkText} onPress={() => navigation.navigate('ForgotPassword')}> Forgot My Password</Text>
-              </Pressable>
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={[styles.input, { flex: 1 }]}
+                    placeholder="Password"
+                    secureTextEntry={hidePassword}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    value={values.password}
+                  />
+                  <Pressable
+                    style={styles.showButton}
+                    onPress={() => setHidePassword(!hidePassword)}
+                  >
+                    <Ionicons
+                      name={hidePassword ? 'eye-off' : 'eye'}
+                      size={24}
+                      color="gray"
+                    />
+                  </Pressable>
+                </View>
+                {errors.password && touched.password && (
+                  <Text style={styles.errorText}>{errors.password}</Text>
+                )}
 
-              
-          </View>
-            
-    </View>
+                
+                <Pressable onPress={handleSubmit as any} style={styles.buttonEnter}>
+                  <Text style={styles.textEnter}>Join</Text>
+                </Pressable>
 
-    
-  );
+                
+                <Pressable
+                  onPress={() => navigation.navigate('Register')}
+                  style={styles.buttonRegister}
+                >
+                  <Text style={styles.textRegister}>Register</Text>
+                </Pressable>
+
+                
+                <Pressable style={styles.link}>
+                  <Text
+                    style={styles.linkText}
+                    onPress={() => navigation.navigate('ForgotPassword')}
+                  >
+                    Forgot My Password
+                  </Text>
+                </Pressable>
+              </>
+            )}
+          </Formik>
+         
+         
+        </View>
+      </View>
+    </ImageBackground>
+  )
 }
 
-
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   centralize: {
     flex: 1,
-    backgroundColor: '#dedede',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  box: {  
+  box: {
     width: '80%',
-    height: 350,
     padding: 20,
     backgroundColor: '#fff',
     borderRadius: 10,
@@ -129,58 +133,61 @@ const styles = StyleSheet.create({
   },
   titleLogin: {
     marginBottom: 20,
-    alignItems: 'center',
     fontSize: 24,
     fontWeight: 'bold',
-   
+    textAlign: 'center',
   },
-  
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
     borderRadius: 5,
     backgroundColor: '#fff',
+    marginBottom: 10,
   },
-  showButton:{
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
+  },
+  showButton: {
     marginLeft: 10,
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  passwordContainer:{
+  passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
   },
-  link:{
+  link: {
     marginTop: 10,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
-  linkText:{
+  linkText: {
     color: '#007AFF',
     textDecorationLine: 'underline',
   },
-  buttonRegister:{
+  buttonRegister: {
     marginTop: 15,
     backgroundColor: '#007AFF',
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: 'center',
   },
-  textRegister:{
+  textRegister: {
     color: '#fff',
     fontWeight: 'bold',
   },
-  buttonEnter:{
+  buttonEnter: {
     backgroundColor: '#28a745',
     paddingVertical: 12,
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 10,
   },
-  textEnter:{
+  textEnter: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
-  }
-});
+  },
+})
