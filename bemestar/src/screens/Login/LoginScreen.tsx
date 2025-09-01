@@ -26,7 +26,9 @@ export function LoginScreen() {
 
   return (
     <ImageBackground
-      source={require('../../assets/imgs/background.png')}
+      source={{
+        uri: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+      }}
       style={styles.background}
     >
       <View style={styles.centralize}>

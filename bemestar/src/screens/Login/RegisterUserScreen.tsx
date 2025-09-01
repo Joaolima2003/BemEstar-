@@ -29,7 +29,9 @@ export function RegisterUserScreen() {
 
   return (
     <ImageBackground
-      source={require('../../assets/imgs/background.png')}
+      source={{
+        uri: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+      }}
       style={styles.background}
     >
       <View style={styles.centralize}>
