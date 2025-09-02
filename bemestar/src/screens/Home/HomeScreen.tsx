@@ -29,6 +29,7 @@ export function HomeScreen() {
 ]
 
   return (
+    <View style={{flex: 1}}>
     <ImageBackground
       source={{
         uri: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
@@ -68,30 +69,28 @@ export function HomeScreen() {
           ))}
         </View>
       </View>
-
-       {/*Rodapé - Bottom Navigation*/}   
-    <View style={styles.iconMenuWrapper}>
-        <View style={styles.iconMenu}>
-          <Pressable style={styles.iconButton}>
-            <Ionicons name="home" size={28} color="#2C3E50" />
-          </Pressable>
-          <Pressable style={styles.iconButton}>
-            <Ionicons name="add-circle" size={28} color="#2C3E50" />
-          </Pressable>
-          <Pressable style={styles.iconButton}>
-            <Ionicons name="airplane" size={28} color="#2C3E50" />
-          </Pressable>
-          <Pressable style={styles.iconButton}>
-            <Ionicons name="car" size={28} color="#2C3E50" />
-          </Pressable>
-          <Pressable style={styles.iconButton}>
-            <Ionicons name="settings" size={28} color="#2C3E50" />
-          </Pressable>
-        </View>
-    </View>
-
-
     </ImageBackground>
+       {/*Rodapé - Bottom Navigation*/}   
+      <View style={styles.iconMenuWrapper}>
+          <View style={styles.iconMenu}>
+            <Pressable style={styles.iconButton}>
+              <Ionicons name="home" size={28} color="#2C3E50" />
+            </Pressable>
+            <Pressable style={styles.iconButton}>
+              <Ionicons name="add-circle" size={28} color="#2C3E50" />
+            </Pressable>
+            <Pressable style={styles.iconButton}>
+              <Ionicons name="airplane" size={28} color="#2C3E50" />
+            </Pressable>
+            <Pressable style={styles.iconButton}>
+              <Ionicons name="car" size={28} color="#2C3E50" />
+            </Pressable>
+            <Pressable style={styles.iconButton}>
+              <Ionicons name="settings" size={28} color="#2C3E50" />
+            </Pressable>
+          </View>
+      </View>
+    </View>
   )
 }
 
@@ -152,8 +151,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     marginTop: 20,
-    
-    
   },
   card: {
     width: "48%", 
@@ -174,19 +171,22 @@ const styles = StyleSheet.create({
     color: "#e6ebf0ff",
   },
   iconMenuWrapper: {
-  position: 'absolute',
-  bottom: 0,
-  width: '100%',
-  backgroundColor: '#fff',
-  paddingBottom: 30, 
+    position: 'absolute',
+    bottom: 10,
+    width: '100%',
+    backgroundColor: '#fff',
+    paddingBottom: 30, 
   },
   iconMenu: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
     height: 70,
+    marginBottom: 10,
+    borderRadius: 10,
     borderTopWidth: 1,
     borderTopColor: "#ccc",
+    backgroundColor: 'white',
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
